@@ -25,60 +25,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @AutoConfigureMockMvc
-public class CustomerServiceImplTest {	
+public class CustomerServiceImplTest {
 
-	  @Autowired
-	  private CustomerServiceImpl customerServiceImpl;
-	  
-	  @MockBean
-	  private TransactionRepository transactionRepository;
-	  
-	  @Test
-		public void getCustomerTransactionTest_pass()
-		{
-		  Customer customer = new Customer();
-			List<Transaction> list = getTransactionData();
-			customer.setTransactionList(list);
-			//test
-			List<Transaction> txnList = customer.getTransactionList();
+	@Autowired
+	private CustomerServiceImpl customerServiceImpl;
 
-			assertEquals(3, txnList.size());
-		}
+	@MockBean
+	private TransactionRepository transactionRepository;
 
-	  
-	  @Test
-		public void testWhenCustomerByIdIsPresent()
-		{
-		  Customer customer = new Customer();
-		  customer.setCusId(3000);
-		  
-		  //test
-			when(transactionRepository.findById(customer.getCusId())).thenReturn(Optional.of(customer));
-			Optional<Customer> expected = customerServiceImpl.getCustomerById(customer.getCusId());
+	@Test
+	public void getCustomerTransactionTest_pass() {
+		Customer customer = new Customer();
+		List<Transaction> list = getTransactionData();
+		customer.setTransactionList(list);
+		// test
+		List<Transaction> txnList = customer.getTransactionList();
+		assertEquals(3, txnList.size());
+	}
 
-			assertThat(expected).isNotNull();
-		}
-	  
-         @Test
-			public void testFindAllCustomerTransactions()
-			{
-			  
-			  //test
-				when(transactionRepository.getAllCustomerTransactions()).thenReturn(new ArrayList<>());
-				List<TransactionRepository.Transaction> expected = customerServiceImpl.getAllCustomerTransactions();
+	@Test
+	public void testWhenCustomerByIdIsPresent() {
+		Customer customer = new Customer();
+		customer.setCusId(3000);
+		// test
+		when(transactionRepository.findById(customer.getCusId())).thenReturn(Optional.of(customer));
+		Optional<Customer> expected = customerServiceImpl.getCustomerById(customer.getCusId());
+		assertThat(expected).isNotNull();
+	}
 
-				assertThat(expected).isNotNull();
-			}
-         
-         private List<Transaction> getTransactionData() {
-     		List<Transaction> list = new ArrayList<Transaction>();
-     		   Transaction txn = new Transaction(10.0d, 200L, LocalDate.now());
-     		   Transaction txn1 = new Transaction(10.1d, 201L, LocalDate.now());
-     		   Transaction txn2 = new Transaction(10.2d, 202L, LocalDate.now());
+	@Test
+	public void testFindAllCustomerTransactions() {
+		// test
+		when(transactionRepository.getAllCustomerTransactions()).thenReturn(new ArrayList<>());
+		List<TransactionRepository.Transaction> expected = customerServiceImpl.getAllCustomerTransactions();
+		assertThat(expected).isNotNull();
+	}
 
-     		list.add(txn);
-     		list.add(txn1);
-     		list.add(txn2);
-     		return list;
-     	}	  
-	 }
+	private List<Transaction> getTransactionData() {
+		List<Transaction> list = new ArrayList<Transaction>();
+		Transaction txn = new Transaction(10.0d, 200L, LocalDate.now());
+		Transaction txn1 = new Transaction(10.1d, 201L, LocalDate.now());
+		Transaction txn2 = new Transaction(10.2d, 202L, LocalDate.now());
+
+		list.add(txn);
+		list.add(txn1);
+		list.add(txn2);
+		return list;
+	}
+}
