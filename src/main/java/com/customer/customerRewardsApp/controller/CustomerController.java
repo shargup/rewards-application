@@ -47,13 +47,10 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<Optional<Customer>> getCustomerById(@PathVariable(value = "customerId") Integer customerId) {
+    public ResponseEntity<Customer> getCustomerById(@PathVariable(value = "customerId") Integer customerId) {
         logger.debug("Get Customer by Id");
-        try {
-            return new ResponseEntity<>(customerService.getCustomerById(customerId), HttpStatus.OK);
-        }catch (CustomerNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+            return customerService.getCustomerById(customerId).map(ResponseEntity::ok)
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/getAllCustomerTransactions")

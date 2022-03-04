@@ -1,14 +1,18 @@
 package com.customer.customerRewardsApp.repository;
 
-import antlr.collections.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.LinkedList;
+import com.customer.customerRewardsApp.model.Customer;
+import com.customer.customerRewardsApp.model.Transaction;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureMockMvc
 public class TransactionRepositoryTest {
 
-    @MockBean
+    @Autowired
     private TransactionRepository transactionRepository;
 
     @Test
@@ -28,8 +32,31 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    public void whenFindingCustomerByIdAndMonth_thenCorrect() {
+    public void whenFindingCustomers_thenCorrect() {
         transactionRepository.getAllCustomerTransactions();
-        assertThat(transactionRepository.getAllCustomerTransactions()).isInstanceOf(LinkedList.class);
+        assertThat(transactionRepository.getAllCustomerTransactions()).isInstanceOf(ArrayList.class);
     }
+    
+    @Test
+    public void testSaveCustomerRewards() {
+	  Customer customer = new Customer();
+	  customer.setCusId(null);
+	  customer.setCusName("Mike");
+	 
+	   Transaction txn = new Transaction(10.0d, 200L, LocalDate.now());
+	   List<Transaction> list = new ArrayList<>();
+	   list.add(txn);
+	  
+	  customer.setTransactionList(list);
+      Customer savedCustomer = transactionRepository.save(customer);
+      assertThat(savedCustomer).usingRecursiveComparison().ignoringFields("customerId").isEqualTo(customer);
+	}
+	  
+	  @Test
+      public void testGetCustomerRewardByMonthName() {
+	   Integer customerId = 30;
+
+       List<TransactionRepository.Transaction> txn = transactionRepository.getCustomerRewardsByIdAndMonthName(customerId);
+	   assertThat(txn).usingRecursiveComparison().isEqualTo(new ArrayList<>());
+	  }
 }
